@@ -6,10 +6,45 @@ import EditorForm from "./components/invoice-editor/EditorForm";
 import Preview from "./components/live-preview/Prview";
 import Header from "./components/live-preview/Header";
 import ItemsTable from "./components/saved-invoices/ItemsTable";
-
+import { useState } from "react";
+import { invoiceIdGenerator } from './utils/InvoiceGenerator';
 
 
 function App() {
+
+//Editor form state
+ const[clientName, setClientName] = useState("");
+  const[invoiceNumber, setInvoiceNumber] = useState(invoiceIdGenerator());
+    //LineItems states
+  const [lineItems, setLineItems] = useState([
+  {
+    id: crypto.randomUUID(),
+    description: "",
+    qty: "",
+    rate: "",
+  },
+]);
+
+
+  //Editor form functions
+   const generateNextInvoiceNumber = () => {
+    setInvoiceNumber((previousInvoiceNumber) =>
+      invoiceIdGenerator(previousInvoiceNumber)
+    );
+  };
+
+  // function handleSaveInvoice() {
+
+  //   const newLineItem ={
+  //     description: description,
+  //     qty: qty,
+  //     rate: rate
+  //   }
+  //   return setLineItems((prevLineItems) => [...prevLineItems, newLineItem]);
+  // }
+
+  console.log(lineItems);
+
 
   return (
     <div className="min-h-screen w-full bg-[#f1f5f9] p-6 text-[#0f172a]">
@@ -26,10 +61,22 @@ function App() {
         {/* Editor + Preview */}
         <section className="grid grid-cols-1 gap-4 md:grid-cols-[1.1fr_1fr]">
           {/* Invoice details */}
-          <EditorForm />
+          <EditorForm
+            clientName={clientName}
+            invoiceNumber={invoiceNumber}
+            setClientName={setClientName}
+            setInvoiceNumber={setInvoiceNumber}
+
+            lineItems={lineItems}
+            setLineItems={setLineItems}
+          />
 
           {/* Live preview */}
-        <Preview />
+        <Preview 
+        generateNextInvoiceNumber={generateNextInvoiceNumber}
+        invoiceNumber={invoiceNumber}
+        lineItems={lineItems}
+        />
         </section>
 
         {/* Saved invoices */}
