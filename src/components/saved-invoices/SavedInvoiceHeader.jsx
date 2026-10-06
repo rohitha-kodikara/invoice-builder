@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Header = () => {
+const SavedInvoiceHeader = () => {
   return (
     <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-[#334155]">Saved invoices</h2>
@@ -14,4 +14,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default SavedInvoiceHeader

@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
 
+
 import LineItem from './LineItem';
 
+
 const LineItems = ({lineItems, setLineItems}) => {
+
+
+
   
    const updateLineItem = (id, field, value) => {
     setLineItems((previousItems) =>
@@ -14,6 +19,8 @@ const LineItems = ({lineItems, setLineItems}) => {
     );
   };
 
+  
+
   return (
     <div className="flex flex-col gap-2">
     {lineItems.map((item) => (
@@ -23,7 +30,7 @@ const LineItems = ({lineItems, setLineItems}) => {
           updateLineItem={updateLineItem}
         />
       ))}
-          
+   
             </div> 
   )
 }

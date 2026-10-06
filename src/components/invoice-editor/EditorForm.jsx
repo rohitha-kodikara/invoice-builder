@@ -8,8 +8,17 @@ import UserDetails from './UserDetails';
 
 
 
-const EditorForm = ({clientName, invoiceNumber, setClientName, setInvoiceNumber, lineItems,
-  setLineItems}) => {
+const EditorForm = ({
+  handleSubmitInvoice, 
+  clientName, 
+  invoiceNumber, 
+  setClientName, 
+  setInvoiceNumber, 
+  lineItems,
+  setLineItems,
+  priceControls,
+  setPriceControls
+}) => {
 
    const addLineItem = () => {
   const hasEmptyField = lineItems.some((item) =>
@@ -35,9 +44,12 @@ const EditorForm = ({clientName, invoiceNumber, setClientName, setInvoiceNumber,
 };
 
   return (
+     <form onSubmit={handleSubmitInvoice} className="flex flex-col gap-4">
     <div className="flex flex-col gap-3 rounded-xl border border-[#e2e8f0] bg-white p-4 shadow-sm">
+           
             <h2 className="text-sm font-semibold text-[#334155]">Invoice details</h2>
             
+           
             <UserDetails 
               clientName={clientName}
               invoiceNumber={invoiceNumber}
@@ -59,8 +71,14 @@ const EditorForm = ({clientName, invoiceNumber, setClientName, setInvoiceNumber,
               + Add line item
             </button>
 
-            <PricingControls />
+            <PricingControls
+             priceControls={priceControls}
+             setPriceControls={setPriceControls}
+             />
+
+            
           </div>
+          </form>
   )
 }
 
