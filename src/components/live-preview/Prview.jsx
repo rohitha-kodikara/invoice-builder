@@ -10,7 +10,8 @@ const Preview = ({
   invoiceNumber,
   clientName,
   lineItems,
-  priceControls
+  priceControls,
+  setInvoiceTotal
 }) => {
 
   
@@ -24,6 +25,7 @@ const Preview = ({
               clientName={clientName}
               lineItems={lineItems}
               priceControls={priceControls}
+
             />
 
             <div className="grid grid-cols-2 gap-2">

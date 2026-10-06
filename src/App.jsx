@@ -4,12 +4,11 @@ import InvoiceResetter from "./components/invoice-header/InvoiceResetter";
 import StatList from "./components/statistics/StatList";
 import EditorForm from "./components/invoice-editor/EditorForm";
 import Preview from "./components/live-preview/Prview";
-import Header from "./components/live-preview/Header";
+import { calculateInvoiceTotals } from "./utils/invoiceCalculations";
 import ItemsTable from "./components/saved-invoices/ItemsTable";
 import { useState } from "react";
 import { invoiceIdGenerator } from './utils/InvoiceGenerator';
 
-import { TriangleAlert } from "lucide-react";
 import Swal from "sweetalert2";
 import SavedInvoiceHeader from "./components/saved-invoices/SavedInvoiceHeader";
 
@@ -18,6 +17,7 @@ function App() {
 //Editor form state
  const[clientName, setClientName] = useState("");
   const[invoiceNumber, setInvoiceNumber] = useState(invoiceIdGenerator());
+
     //LineItems states
   const [lineItems, setLineItems] = useState([
     {
@@ -28,6 +28,7 @@ function App() {
     },
 ]);
 
+
 const[priceControls, setPriceControls] = useState({
   tax: 0,
   discount: 0,
@@ -36,25 +37,20 @@ const[priceControls, setPriceControls] = useState({
 
 const[savedInvoices, setSavedInvoices] = useState([]);
 
+const totalInvoices = savedInvoices.length;
+const draftInvoices = savedInvoices.filter(invoice => invoice.priceControls.status === "draft").length;
+const sentInvoices = savedInvoices.filter(invoice => invoice.priceControls.status === "sent").length;
+const paidInvoices = savedInvoices.filter(invoice => invoice.priceControls.status === "paid").length;
 
-
-
-  //Editor form functions
-  //  const generateNextInvoiceNumber = () => {
-  //   setInvoiceNumber((previousInvoiceNumber) =>
-  //     invoiceIdGenerator(previousInvoiceNumber)
-  //   );
-  // };
+const categoryWiseInvoiceTotals ={
+  totalInvoices,
+   draftInvoices,
+   sentInvoices,
+  paidInvoices,
+}
 
   function handleSubmitInvoice(){
   
-    const newInvoice = {
-      id:invoiceNumber,
-      clientName: clientName,
-      lineItems: lineItems,
-      priceControls: priceControls,
-    };
-    
     if (!clientName || !priceControls.tax || !priceControls.discount || lineItems.length === 0) {
       Swal.fire("", "Please fill in all fields before saving the invoice.", "error");
       return;
@@ -68,6 +64,20 @@ const[savedInvoices, setSavedInvoices] = useState([]);
         // denyButtonText: `Don't save`
       }).then((result) => {
         if (result.isConfirmed) {
+
+          const { total } = calculateInvoiceTotals(
+        lineItems,
+        priceControls
+      );
+
+          const newInvoice = {
+        id: invoiceNumber,
+        clientName,
+        lineItems,
+        priceControls,
+        invoiceTotal: total,
+      };
+
           // Save the changes
             setSavedInvoices((previousInvoices) => [...previousInvoices, newInvoice]);
               setClientName("");
@@ -96,6 +106,30 @@ const[savedInvoices, setSavedInvoices] = useState([]);
     
   }
  
+
+  function handleDeleteInvoice(invoiceId) {
+    if (invoiceId !== savedInvoices.id) {
+     
+      Swal.fire({
+  title: "Are you sure?",
+  text: "You won't be able to revert this!",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, delete it!"
+}).then((result) => {
+  if (result.isConfirmed) { 
+setSavedInvoices((previousInvoices) => previousInvoices.filter((invoice) => invoice.id !== invoiceId));
+Swal.fire({
+    title: "Deleted!",
+    text: "Invoice Record deleted.",
+    icon: "success"
+  })}
+})
+    }
+   
+  }
 
 
   return (
@@ -139,13 +173,15 @@ const[savedInvoices, setSavedInvoices] = useState([]);
          clientName={clientName}
          lineItems={lineItems}
          priceControls={priceControls}
+
+         //total
         />
         </section>
 
         {/* Saved invoices */}
         <section className="rounded-xl border border-[#e2e8f0] bg-white p-4 shadow-sm">
-          <SavedInvoiceHeader />
-          <ItemsTable />
+          <SavedInvoiceHeader categoryWiseInvoiceTotals={categoryWiseInvoiceTotals} />
+          <ItemsTable savedInvoices={savedInvoices} handleDeleteInvoice={handleDeleteInvoice} />
         </section>
       </div>
     </div>
