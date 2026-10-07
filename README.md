@@ -1,7 +1,7 @@
 
 ## 🧾 Invoice Builder: Project Explanation
 
-<img width="1412" height="966" alt="image" src="https://github.com/user-attachments/assets/27e3e097-c32f-4274-8d0b-57eab0db88b8" />
+<img width="1456" height="962" alt="image" src="https://github.com/user-attachments/assets/2db01d6b-dfac-4c96-80a5-0e8ca4f52a07" />
 
 
 A React invoice builder where users create invoices, see a live preview, save them, and track totals. Built with React (hooks), Tailwind CSS, SweetAlert2, and Lucide icons.
