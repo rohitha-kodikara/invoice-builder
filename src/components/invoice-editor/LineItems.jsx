@@ -4,7 +4,12 @@ import React, { useState } from 'react'
 import LineItem from './LineItem';
 
 
-const LineItems = ({lineItems, setLineItems}) => {
+
+const LineItems = ({
+  lineItems, 
+  setLineItems, 
+  removeLineItem, 
+  closeLineItem, }) => {
 
 
 
@@ -28,8 +33,11 @@ const LineItems = ({lineItems, setLineItems}) => {
           key={item.id}
           item={item}
           updateLineItem={updateLineItem}
+          removeLineItem={removeLineItem}
         />
       ))}
+       
+      
    
             </div> 
   )

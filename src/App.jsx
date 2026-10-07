@@ -1,16 +1,20 @@
 
 import Logo from "./components/invoice-header/Logo";
-import InvoiceResetter from "./components/invoice-header/InvoiceResetter";
 import StatList from "./components/statistics/StatList";
 import EditorForm from "./components/invoice-editor/EditorForm";
 import Preview from "./components/live-preview/Prview";
-import { calculateInvoiceTotals } from "./utils/invoiceCalculations";
 import ItemsTable from "./components/saved-invoices/ItemsTable";
 import { useState } from "react";
 import { invoiceIdGenerator } from './utils/InvoiceGenerator';
-
-import Swal from "sweetalert2";
+import {
+  createStatItems,
+  variantStyles,
+} from "./utils/statistics";
+import { handleSubmitInvoice as submitInvoice } from "./utils/handleSubmitInvoice";
+import { handleDeleteInvoice as deleteInvoice } from "./utils/handleDeleteInvoice";
 import SavedInvoiceHeader from "./components/saved-invoices/SavedInvoiceHeader";
+
+
 
 function App() {
 
@@ -29,14 +33,19 @@ function App() {
 ]);
 
 
+
+
+
+
 const[priceControls, setPriceControls] = useState({
-  tax: 0,
-  discount: 0,
+  tax: 1,
+  discount: 1,
   status: "draft",
 });
 
 const[savedInvoices, setSavedInvoices] = useState([]);
 
+//saved invoices category wise totals
 const totalInvoices = savedInvoices.length;
 const draftInvoices = savedInvoices.filter(invoice => invoice.priceControls.status === "draft").length;
 const sentInvoices = savedInvoices.filter(invoice => invoice.priceControls.status === "sent").length;
@@ -49,88 +58,51 @@ const categoryWiseInvoiceTotals ={
   paidInvoices,
 }
 
-  function handleSubmitInvoice(){
-  
-    if (!clientName || !priceControls.tax || !priceControls.discount || lineItems.length === 0) {
-      Swal.fire("", "Please fill in all fields before saving the invoice.", "error");
-      return;
-    }else{
-        //start of if condition
-      Swal.fire({
-        title: "Do you want to save the changes?",
-        // showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: "Save",
-        // denyButtonText: `Don't save`
-      }).then((result) => {
-        if (result.isConfirmed) {
 
-          const { total } = calculateInvoiceTotals(
-        lineItems,
-        priceControls
-      );
+function handleSubmitInvoice() {
+  submitInvoice({
+    clientName,
+    lineItems,
+    priceControls,
+    invoiceNumber,
+    setSavedInvoices,
+    setClientName,
+    setLineItems,
+    setPriceControls,
+    setInvoiceNumber,
+  });
+}
 
-          const newInvoice = {
-        id: invoiceNumber,
-        clientName,
-        lineItems,
-        priceControls,
-        invoiceTotal: total,
-      };
 
-          // Save the changes
-            setSavedInvoices((previousInvoices) => [...previousInvoices, newInvoice]);
-              setClientName("");
-              setLineItems([
-                {
-              id: crypto.randomUUID(),
-              description: "",
-              qty: "",
-              rate: "",
-            }])
-              setPriceControls({
-                tax: 0,
-                discount: 0,
-                status: "draft",
-              });
-          setInvoiceNumber(invoiceIdGenerator(invoiceNumber));
-          //save the changes
-          Swal.fire("Saved!", "", "success")
-        }
-        else if (result.isDenied) Swal.fire("Changes are not saved", "", "info");
-      });
+function handleDeleteInvoice(invoiceId) {
+  deleteInvoice({
+    invoiceId,
+    setSavedInvoices,
+  });
 
-      //end of if condition
-    }
+}
 
-    
-  }
  
 
-  function handleDeleteInvoice(invoiceId) {
-    if (invoiceId !== savedInvoices.id) {
-     
-      Swal.fire({
-  title: "Are you sure?",
-  text: "You won't be able to revert this!",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonColor: "#3085d6",
-  cancelButtonColor: "#d33",
-  confirmButtonText: "Yes, delete it!"
-}).then((result) => {
-  if (result.isConfirmed) { 
-setSavedInvoices((previousInvoices) => previousInvoices.filter((invoice) => invoice.id !== invoiceId));
-Swal.fire({
-    title: "Deleted!",
-    text: "Invoice Record deleted.",
-    icon: "success"
-  })}
-})
-    }
-   
-  }
+  //statistics calculations
+  const totalPriceOfAllInvoices = savedInvoices.reduce((accumulator, invoice) => accumulator + invoice.invoiceTotal, 0);
+  const totalPaidInvoices = savedInvoices.filter(invoice => invoice.priceControls.status === "paid").reduce((accumulator, invoice) => accumulator + invoice.invoiceTotal, 0);
+  const totalOutstandingInvoices = totalPriceOfAllInvoices - totalPaidInvoices;
+  
+  //pass statistics to StatList component
+  const statItems = createStatItems({
+  totalPriceOfAllInvoices,
+  totalPaidInvoices,
+  totalOutstandingInvoices,
+});
 
+
+function removeLineItem(lineItemId){
+  setLineItems((prevLineItems) => prevLineItems.filter((item) => item.id !== lineItemId));
+
+}
+console.log(lineItems)
+ 
 
   return (
     <div className="min-h-screen w-full bg-[#f1f5f9] p-6 text-[#0f172a]">
@@ -139,16 +111,21 @@ Swal.fire({
         {/* Header */}
         <header className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 shadow-sm">
          <Logo />
-          <InvoiceResetter />
+       
         </header>
 
         {/* Stats */}
-        <StatList />
+        <StatList 
+         statItems={statItems}
+          variantStyles={variantStyles}
+        />
 
         {/* Editor + Preview */}
         <section className="grid grid-cols-1 gap-4 md:grid-cols-[1.1fr_1fr]">
           {/* Invoice details */}
           <EditorForm
+          //submit invoice 
+           handleSubmitInvoice={handleSubmitInvoice}
             //user details
             clientName={clientName}
             invoiceNumber={invoiceNumber}
@@ -157,8 +134,11 @@ Swal.fire({
             //line items
             lineItems={lineItems}
             setLineItems={setLineItems}
-            //submit invoice
-            handleSubmitInvoice={handleSubmitInvoice}
+ 
+            //remove line item
+            removeLineItem={removeLineItem}
+
+
             //price controls
             priceControls={priceControls}
             setPriceControls={setPriceControls}
@@ -166,7 +146,7 @@ Swal.fire({
 
           {/* Live preview */}
         <Preview 
-        handleSubmitInvoice={handleSubmitInvoice}
+       handleSubmitInvoice={handleSubmitInvoice}
 
         //preview props
          invoiceNumber={invoiceNumber}

@@ -46,11 +46,6 @@ const Calculations = ({
                     ) : (
                       <p className="text-sm text-[#64748b]">No line items</p>
                     )}
-                {/* <div className="flex items-center justify-between border-b border-[#e2e8f0] py-1.5">
-                  <span className="flex-1">Landing page</span>
-                  <span className="w-24 text-right text-xs">2 × $450</span>
-                  <span className="w-16 text-right text-xs font-semibold">$900</span>
-                </div> */}
 
               </div>
 

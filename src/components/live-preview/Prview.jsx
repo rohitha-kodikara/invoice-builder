@@ -11,7 +11,6 @@ const Preview = ({
   clientName,
   lineItems,
   priceControls,
-  setInvoiceTotal
 }) => {
 
   
@@ -28,7 +27,7 @@ const Preview = ({
 
             />
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid  gap-2">
               <button
                onClick={handleSubmitInvoice}
               
@@ -36,9 +35,9 @@ const Preview = ({
               className="cursor-pointer rounded-lg bg-[#2563eb] py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8]">
                 💾 Save
               </button>
-              <button className="cursor-pointer rounded-lg bg-[#0f766e] py-2 text-sm font-semibold text-white hover:bg-[#115e59]">
+              {/* <button className="cursor-pointer rounded-lg bg-[#0f766e] py-2 text-sm font-semibold text-white hover:bg-[#115e59]">
                 📄 Duplicate
-              </button>
+              </button> */}
             </div>
           </div>
   )

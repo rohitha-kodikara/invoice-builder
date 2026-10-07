@@ -17,7 +17,8 @@ const EditorForm = ({
   lineItems,
   setLineItems,
   priceControls,
-  setPriceControls
+  setPriceControls,
+  removeLineItem,
 }) => {
 
    const addLineItem = () => {
@@ -62,6 +63,7 @@ const EditorForm = ({
             <LineItems 
              lineItems={lineItems}
             setLineItems={setLineItems}
+              removeLineItem={removeLineItem}
             />
 
             <button

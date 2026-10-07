@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+
 import { X } from "lucide-react";
 
-const LineItem = ({item, updateLineItem}) => {
+const LineItem = ({item, updateLineItem, removeLineItem}) => {
 
-    const [closeLineItem, setCloseLineItem] = useState(false);
+  
 
   return (
     <>
-    {!closeLineItem ?(
+    {
       <div className="grid grid-cols-[1fr_52px_72px_20px] items-center gap-2">
                 <input
                   type="text"
@@ -51,12 +51,12 @@ const LineItem = ({item, updateLineItem}) => {
                   className="min-w-0 rounded-lg border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a] outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#bfdbfe]"
                 />
                 <button 
-                onClick={() => setCloseLineItem(t=>!t)}
+                onClick={() => removeLineItem(item.id)}
                 aria-label="Remove item" className="flex h-9 w-8  cursor-pointer items-center justify-center rounded-md bg-[#ea7a3d] text-white hover:bg-[#c2410c]">
                   <X size={18} />
                 </button> 
       </div>
-    ):null}
+    }
     </>
   )
 }
