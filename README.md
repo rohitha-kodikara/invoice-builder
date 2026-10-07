@@ -6,6 +6,11 @@
 
 A React invoice builder where users create invoices, see a live preview, save them, and track totals. Built with React (hooks), Tailwind CSS, SweetAlert2, and Lucide icons.
 
+### Tech Stack
+- React (functional components and hooks)
+- Tailwind CSS
+- SweetAlert2 (confirmation and validation dialogs)
+
 ### 1. Features I Developed
 
 - Invoice editor with client name and an auto-generated sequential invoice number (`INV-0001`, `INV-0002`, ...)
