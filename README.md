@@ -34,7 +34,7 @@ A React invoice builder where users create invoices, see a live preview, save th
 - *Problem:* I first kept a separate state for each input field. When I filled a row and clicked "Add line item", the new row showed the previously typed values.
 - *Solution:* I changed to a single state array of objects, where each line item is `{ id, description, qty, rate }`. Every new row is created as a fresh empty object with its own unique id (`crypto.randomUUID()`), so rows never share values.
 
-### 3. Handler Functions and Wrapper Functions
+**2.4 Handler Functions and Wrapper Functions**
 
 In `App.jsx`, `handleSubmitInvoice` and `handleDeleteInvoice` are wrapper functions around the logic in `utils` (imported as `submitInvoice` / `deleteInvoice`).
 - The real logic needs many arguments, such as state values and setters like `setSavedInvoices`.
